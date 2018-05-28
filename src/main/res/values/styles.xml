@@ -20,7 +20,6 @@
     </style>
 
 
-
     <style name="Theme.ToolBar.Menu" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <!-- 设置-弹窗的背景-颜色-->
         <item name="android:colorBackground">@color/common_bg</item>
@@ -31,14 +30,20 @@
         <!-- 用于替换菜单的三个小白点，换成自已的图片-->
         <item name="actionOverflowButtonStyle">@style/ActionButton.Overflow.Menu</item>
         <!--用于控制menu弹出的位置，位于toolbar的下面，而不是上面-->
-        <!--<item name="actionOverflowMenuStyle">@style/OverflowMenuStyle</item>-->
+        <item name="actionOverflowMenuStyle">@style/OverflowMenuStyle</item>
         <!-- 用于修改item默认的分割线-->
         <item name="android:dropDownListViewStyle">@style/dropDownStyle</item>
         <item name="dropDownListViewStyle">@style/dropDownStyle</item>
     </style>
 
+    <!--把该属性改为false即可使menu位置位于toolbar之下-->
+    <style name="OverflowMenuStyle" parent="Widget.AppCompat.Light.PopupMenu.Overflow">
+        <item name="overlapAnchor">false</item>
+    </style>
+
+    <!--修改菜单中的图标-->
     <style name="ActionButton.Overflow.Menu" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
-        <item name="android:src">@mipmap/offline_update</item>
+        <item name="android:src">@mipmap/ic_menu</item>
     </style>
 
     <!--用于修改popmenu的分割线-->
