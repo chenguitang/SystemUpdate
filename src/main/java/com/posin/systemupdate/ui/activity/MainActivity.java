@@ -1,6 +1,7 @@
 package com.posin.systemupdate.ui.activity;
 
 import android.support.v7.view.menu.MenuBuilder;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.Toast;
 import com.posin.systemupdate.R;
 import com.posin.systemupdate.base.BaseActivity;
 
+import java.io.File;
 import java.lang.reflect.Method;
 
 /**
@@ -19,6 +21,8 @@ import java.lang.reflect.Method;
  */
 public class MainActivity extends BaseActivity {
 
+    private static final String TAG = "MainActivity";
+
     @Override
     public int getLayoutId() {
         return R.layout.activity_main;
@@ -26,6 +30,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initData() {
+
 
     }
 
