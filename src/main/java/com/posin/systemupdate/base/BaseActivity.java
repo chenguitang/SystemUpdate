@@ -18,7 +18,7 @@ import butterknife.ButterKnife;
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
-    protected Context mContext;
+    protected static Context mContext;
     public Toolbar mCommonToolbar;
 
     @Override

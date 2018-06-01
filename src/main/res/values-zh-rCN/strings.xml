@@ -1,3 +1,55 @@
 <resources>
     <string name="app_name">系统更新</string>
+
+    <string name="menu_offline_update">离线更新</string>
+    <string name="menu_exit_app">退出应用</string>
+
+    <string name="btnStartUpdate">开始更新</string>
+    <string name="LabelUpdateOnline">在线更新 :</string>
+    <string name="btnCheckUpdate">检查更新</string>
+    <string name="btnUpdateOpton">选项</string>
+    <string name="labelOfflineUpdate">离线更新 :</string>
+    <string name="btnBrowseUpdatePackage">安装离线更新包</string>
+    <string name="LabelOnlineUpdateAddress">网址 :</string>
+    <string name="btnOnlineUpdateResetAddress">复位网址</string>
+    <string name="LabelOfflineUpdateAddress">更新包:</string>
+    <string name="btnExit">退出</string>
+    <string name="strGoUp">返回上一层...</string>
+    <string name="strGoRoot">返回根目录...</string>
+    <string name="strCurrentPath">当前路径 : </string>
+    <string name="strOnline">在线</string>
+    <string name="strOffline">离线</string>
+    <string name="btnDownload">下载更新包</string>
+    <string name="title_activity_installer">更新包安装器</string>
+    <string name="btnAdvanceOnlineOption">高级选项</string>
+    <string name="strFirstInfo">请点击 \'检查更新\' 按键,\n 来确认是否有新的更新包...</string>
+    <string name="strUpdateAvailable">有新的更新包可用.</string>
+    <string name="strNoUpdatesAvailable">无需更新.</string>
+    <string name="strUpdateDone">更新完成.</string>
+    <string name="strFailedToGetUpdateInfo">无法获取更新信息.\n请检查网络是否已连接.</string>
+    <string name="strUnpackUpdatePackage">解压更新包 : </string>
+    <string name="strInstallSetupApk">准备更新程序 </string>
+    <string name="strFaildInstallPackage">安装更新包失败!</string>
+    <string name="strRunSetupScript">运行更新脚本</string>
+    <string name="strUnpacking">正在解压</string>
+    <string name="strPrepareInstaller">准备安装程序</string>
+    <string name="strFailedToExecuteSetupScript">运行安装包脚本时出错!</string>
+    <string name="file_browser_title">请选择更新包</string>
+    <string name="go_root">转到根目录</string>
+    <string name="go_up">转到上层目录</string>
+    <string name="installer_view_title">安装</string>
+    <string name="strWaitForCheckResult">正在检查是否有更新包,请稍等...</string>
+    <string name="strDownloading">正在下载...</string>
+    <string name="cancel_download">取消</string>
+    <string name="strUserCancelDownload">下载已取消!</string>
+    <string name="strDownloadFailed">下载失败!</string>
+    <string name="strSuccessInstallPackage">安装成功!</string>
+    <string name="strUserCancelInstall">已取消</string>
+    <string name="strMd5SumError">下载失败. 文件校验码不一致.</string>
+    <string name="selected_file">"已经选中 : "</string>
+    <string name="str_internal_storage">内部SD存储器</string>
+    <string name="str_external_storage">外部SD存储器</string>
+    <string name="str_usb_storage">USB存储器</string>
+    <string name="str_other_external_storage">外部存储器</string>
+
 </resources>

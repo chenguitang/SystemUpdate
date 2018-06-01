@@ -5,13 +5,13 @@
     tools:context="com.posin.printer.ui.activity.MainActivity">
 
     <item android:id="@+id/offline_update"
-        android:title="离线更新"
+        android:title="@string/menu_offline_update"
         android:orderInCategory="90"
         android:icon="@mipmap/ic_update"
         app:showAsAction="never"/>
 
     <item android:id="@+id/system_exit"
-        android:title="退出应用"
+        android:title="@string/menu_exit_app"
         android:icon="@mipmap/ic_exit"
         android:orderInCategory="90"
         app:showAsAction="never"/>
