@@ -1,6 +1,5 @@
 package com.posin.systemupdate.ui.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.view.menu.MenuBuilder;
 import android.text.TextUtils;
@@ -14,16 +13,11 @@ import com.posin.systemupdate.R;
 import com.posin.systemupdate.base.BaseActivity;
 import com.posin.systemupdate.ui.contract.UpdatePpkContract;
 import com.posin.systemupdate.ui.presenter.UpdatePpkPresenter;
-import com.posin.systemupdate.utils.SystemUtils;
-import com.posin.systemupdate.view.FileBrowserDialog;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Properties;
 
-import static okhttp3.internal.Internal.instance;
+import static android.R.attr.path;
 
 /**
  * FileName: MainActivity
@@ -45,6 +39,10 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
 
     @Override
     public void initData() {
+
+        mUpdatePpkPresenter = new UpdatePpkPresenter(this, this);
+        mUpdatePpkPresenter.updateSystem(new File("/mnt/media_rw/BC3D-FF39/ppk/" +
+                "安装广告系统-20180602-01.ppk"));
     }
 
     @Override
