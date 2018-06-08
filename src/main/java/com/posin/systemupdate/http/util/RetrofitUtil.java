@@ -23,7 +23,7 @@ public class RetrofitUtil {
     private static OkHttpClient mOkHttpClient;
 
 
-    private static Retrofit getRetrofit() {
+    protected static Retrofit getRetrofit() {
         if (mOkHttpClient == null) {
             mOkHttpClient= new OkHttpClient.Builder()
                     .connectTimeout(10, TimeUnit.SECONDS) //连接超时
@@ -42,7 +42,7 @@ public class RetrofitUtil {
         return mRetrofit;
     }
 
-    private static UpdateApi getUpdateApi() {
+    protected static UpdateApi getUpdateApi() {
         if (mUpdateApi == null) {
             mUpdateApi = getRetrofit().create(UpdateApi.class);
         }

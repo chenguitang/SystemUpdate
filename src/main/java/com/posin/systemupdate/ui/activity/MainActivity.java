@@ -11,13 +11,24 @@ import android.widget.Toast;
 
 import com.posin.systemupdate.R;
 import com.posin.systemupdate.base.BaseActivity;
+import com.posin.systemupdate.http.util.DownloadUtils;
+import com.posin.systemupdate.http.util.HttpClient;
+import com.posin.systemupdate.module.download.DownloadListener;
 import com.posin.systemupdate.ui.contract.UpdatePpkContract;
 import com.posin.systemupdate.ui.presenter.UpdatePpkPresenter;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 
-import static android.R.attr.path;
+import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
 
 /**
  * FileName: MainActivity
@@ -30,6 +41,8 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
     private static final String TAG = "MainActivity";
     private static final String[] PPK_EXT = {".ppk"};
 
+    private static final String savePath = "/mnt/sdcard/test.apk";
+
     private UpdatePpkPresenter mUpdatePpkPresenter;
 
     @Override
@@ -40,9 +53,100 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
     @Override
     public void initData() {
 
-        mUpdatePpkPresenter = new UpdatePpkPresenter(this, this);
-        mUpdatePpkPresenter.updateSystem(new File("/mnt/media_rw/BC3D-FF39/ppk/" +
-                "安装广告系统-20180602-01.ppk"));
+//        mUpdatePpkPresenter = new UpdatePpkPresenter(this, this);
+//        mUpdatePpkPresenter.updateSystem(new File("/mnt/media_rw/BC3D-FF39/ppk/" +
+//                "安装广告系统-20180602-01.ppk"));
+
+//        String url = "http://123.207.152.101/image-web/adv/201806/20180602114116852_474206.mp4";
+//        String url = "http://andl.guopan.cn/103373-20539-1526513074.apk";
+        String url = "http://shouji.360tpcdn.com/180514/ca679c25433a751cc4ef5c5379a1ea9a/com.popcap.pvz2cthd360_895.apk";
+//        download(url);
+
+        new DownloadUtils(new DownloadListener() {
+            @Override
+            public void onStartDownload() {
+                Log.e(TAG, "**** onStartDownload ****");
+            }
+
+            @Override
+            public void onProgress(int progress) {
+                Log.e(TAG, "**** onProgress ****: " + progress);
+
+            }
+
+            @Override
+            public void onFinishDownload() {
+                Log.e(TAG, "**** onFinishDownload ****");
+
+            }
+
+            @Override
+            public void onFail(Exception exception) {
+                Log.e(TAG, "**** onFail ****: " + exception.getMessage());
+                exception.printStackTrace();
+            }
+        }).download("/180514/ca679c25433a751cc4ef5c5379a1ea9a/com.popcap.pvz2cthd360_895.apk",
+                "/mnt/sdcard/greetty.apk", null);
+
+    }
+
+
+    /**
+     * 下载文件
+     *
+     * @param url 下载地址
+     */
+    public void download(String url) {
+        Log.e(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+        HttpClient.getInstance().download(url)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Observer<ResponseBody>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        Log.e(TAG, " ==    onSubscribe   ==  ");
+                    }
+
+                    @Override
+                    public void onNext(@NonNull ResponseBody responseBody) {
+                        Log.e(TAG, " ==    onNext   ==  ");
+                        try {
+
+                            InputStream inputStream = responseBody.byteStream();
+                            OutputStream os = new FileOutputStream(savePath);
+                            long fileSize = responseBody.contentLength();
+                            Log.e(TAG, "responsebody size: " + fileSize);
+                            int len = 0;
+                            byte[] bytes = new byte[1024 * 2];
+                            long total = 0;
+                            while ((len = inputStream.read(bytes)) != -1) {
+                                total += len;
+                                Log.e(TAG, "length: " + len + "     " + (total * 100 / fileSize) + "%");
+                                os.write(bytes, 0, len);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Log.e(TAG, " ==    onError   ==  ");
+                        Log.e(TAG, "Error: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.e(TAG, " ==    onComplete   ==  ");
+
+                    }
+                });
+
+        Log.e(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n");
     }
 
     @Override
