@@ -39,13 +39,17 @@ public interface HomeContract {
          */
         void searchFailure(Throwable throwable);
 
+        /**
+         * 开始下载更新包
+         */
+        void startDownloadPackage(String savePath);
 
         /**
          * 下载进度
          *
          * @param progress 进度值0~100
          */
-        void downloadUpdatePackage(float progress);
+        void updateDownloadProgress(float progress);
 
         /**
          * 下载失败
@@ -55,12 +59,12 @@ public interface HomeContract {
         /**
          * 下载成功
          */
-        void downloadSuccess();
+        void downloadSuccess(String savePath);
 
         /**
          * 隐藏下载更新包进度提示
          */
-        void dismissDowloadProgress();
+        void dismissDownloadProgress();
 
         /**
          * 更新PPK成功

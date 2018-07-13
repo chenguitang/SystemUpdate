@@ -48,9 +48,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void showLoadingDialog(String title) {
         if (mLoadingDialog == null) {
             mLoadingDialog = new LoadingDialog(this, "数据加载中");
+        } else {
+            if (!mLoadingDialog.isShowing()) {
+                mLoadingDialog.setTitle(title);
+                mLoadingDialog.show();
+            }else{
+                mLoadingDialog.setTitle(title);
+            }
         }
-        mLoadingDialog.setTitle(title);
-        mLoadingDialog.show();
     }
 
     /**
@@ -58,7 +63,10 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     public void dismissLoadingDialog() {
         if (mLoadingDialog != null) {
-            mLoadingDialog.dismiss();
+            if (mLoadingDialog.isShowing()) {
+                mLoadingDialog.dismiss();
+                mLoadingDialog = null;
+            }
         }
     }
 

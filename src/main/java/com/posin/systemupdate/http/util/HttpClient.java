@@ -1,7 +1,9 @@
 package com.posin.systemupdate.http.util;
 
 import com.posin.systemupdate.bean.UpdateDetail;
+import com.posin.systemupdate.module.download.DownloadInterceptor;
 import com.posin.systemupdate.module.download.DownloadListener;
+import com.posin.systemupdate.ui.contract.HomeContract;
 
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
@@ -19,7 +21,6 @@ public class HttpClient extends RetrofitUtil {
     }
 
     private HttpClient() {
-
     }
 
     public static HttpClient getInstance() {
@@ -43,8 +44,9 @@ public class HttpClient extends RetrofitUtil {
      * @param url 下载地址
      * @return TODO
      */
-    public Observable<ResponseBody> download(String url) {
-        return getUpdateApi().download(url);
+    public Observable<ResponseBody> download(String url, HomeContract.IHomeView homeView) {
+//        return getUpdateApi().download(url);
+        return  DownloadUtils.getUpdateApi(homeView).download(url);
     }
 
 }

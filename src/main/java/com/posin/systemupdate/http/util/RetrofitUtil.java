@@ -23,11 +23,11 @@ public class RetrofitUtil {
     private static OkHttpClient mOkHttpClient;
 
 
-    protected static Retrofit getRetrofit() {
+    static Retrofit getRetrofit() {
         if (mOkHttpClient == null) {
-            mOkHttpClient= new OkHttpClient.Builder()
+            mOkHttpClient = new OkHttpClient.Builder()
                     .connectTimeout(10, TimeUnit.SECONDS) //连接超时
-                    .readTimeout(20,TimeUnit.SECONDS) //读写文件超时
+                    .readTimeout(20, TimeUnit.SECONDS) //读写文件超时
                     .retryOnConnectionFailure(true) // 失败重发
                     .build();
         }
@@ -42,7 +42,7 @@ public class RetrofitUtil {
         return mRetrofit;
     }
 
-    protected static UpdateApi getUpdateApi() {
+    static UpdateApi getUpdateApi() {
         if (mUpdateApi == null) {
             mUpdateApi = getRetrofit().create(UpdateApi.class);
         }

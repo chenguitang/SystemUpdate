@@ -7,11 +7,17 @@ import com.posin.systemupdate.bean.UpdateDetail;
 import com.posin.systemupdate.http.util.HttpClient;
 import com.posin.systemupdate.ui.contract.HomeContract;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
@@ -49,10 +55,6 @@ public class HomePresenter implements HomeContract.IHomePresenter {
                             mHomeView.unNeedUpdate(type);
                         } else {
                             mHomeView.needToUpdate(type, updateDetail);
-                            Log.e(TAG, "update url: " + updateDetail.getUrl());
-                            Log.e(TAG, "update version: " + updateDetail.getVersion());
-                            Log.e(TAG, "update desc: " + updateDetail.getInstruction());
-                            Log.e(TAG, "update date: " + updateDetail.getUploaddate());
                         }
                     }
 
@@ -70,36 +72,76 @@ public class HomePresenter implements HomeContract.IHomePresenter {
     }
 
     @Override
-    public void downloadUpdatePackage(String url, String savePath) {
-        HttpClient.getInstance().download(url)
+    public void downloadUpdatePackage(String url, final String savePath) {
+        HttpClient.getInstance().download(url, mHomeView)
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.newThread())
-                .subscribe(new Observer<ResponseBody>() {
+                .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                        mHomeView.downloadUpdatePackage(0);
+                    public void accept(Disposable disposable) throws Exception {
+                       mHomeView.startDownloadPackage(savePath);
                     }
-
+                })
+                .map(new Function<ResponseBody, InputStream>() {
                     @Override
-                    public void onNext(@NonNull ResponseBody responseBody) {
-
+                    public InputStream apply(@NonNull ResponseBody responseBody) throws Exception {
+                        return responseBody.byteStream();
                     }
-
+                }).observeOn(Schedulers.computation())
+                .doOnNext(new Consumer<InputStream>() {
                     @Override
-                    public void onError(@NonNull Throwable e) {
-                        mHomeView.dismissDowloadProgress();
-                        mHomeView.downloadFailure(e);
+                    public void accept(InputStream inputStream) throws Exception {
+                        writeFile(inputStream, savePath);
                     }
-
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError(new Consumer<Throwable>() {
                     @Override
-                    public void onComplete() {
-                        mHomeView.dismissDowloadProgress();
+                    public void accept(Throwable throwable) throws Exception {
+                        mHomeView.downloadFailure(throwable);
+                        mHomeView.dismissDownloadProgress();
                     }
-                });
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        mHomeView.dismissDownloadProgress();
+                        mHomeView.downloadSuccess(savePath);
+                    }
+                })
+                .subscribe( );
     }
 
     @Override
     public void updateSystemForPpk(String path) {
+
+    }
+
+    /**
+     * 将输入流写入文件
+     *
+     * @param inputString 文件输入流
+     * @param filePath    文件保存位置
+     */
+    private void writeFile(InputStream inputString, String filePath) throws Exception {
+
+        File file = new File(filePath);
+        if (file.exists()) {
+            file.delete();
+        }
+
+        FileOutputStream fos = new FileOutputStream(file);
+
+        byte[] b = new byte[1024 * 5];
+
+        int len;
+        Log.e(TAG, "开始保存数据数据");
+        while ((len = inputString.read(b)) != -1) {
+            fos.write(b, 0, len);
+        }
+        Log.e(TAG, "数据写入完成");
+        inputString.close();
+        fos.close();
 
     }
 }

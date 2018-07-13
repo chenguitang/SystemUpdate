@@ -1,5 +1,9 @@
 package com.posin.systemupdate.module.download;
 
+import android.util.Log;
+
+import com.posin.systemupdate.ui.contract.HomeContract;
+
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -14,16 +18,17 @@ import okhttp3.ResponseBody;
  */
 public class DownloadInterceptor implements Interceptor {
 
-    private DownloadListener mDownloadListener;
 
-    public DownloadInterceptor(DownloadListener downloadListener) {
-        this.mDownloadListener = downloadListener;
+    private HomeContract.IHomeView mHomeView;
+
+    public DownloadInterceptor(HomeContract.IHomeView homeView) {
+        this.mHomeView = homeView;
     }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
         Response response = chain.proceed(chain.request());
         return response.newBuilder().body(
-                new ProgressResponseBody(response.body(), mDownloadListener)).build();
+                new ProgressResponseBody(response.body(), mHomeView)).build();
     }
 }

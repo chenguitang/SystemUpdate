@@ -29,6 +29,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static android.R.attr.path;
+
 /**
  * FileName: MainActivity
  * Author: Greetty
@@ -206,6 +208,11 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
                 "\n更新包版本为：" + updateDetail.getVersion() +
                 "\n更新包上传时间：" + updateDetail.getUploaddate());
 
+        if (type.toLowerCase().equals("ppk"))
+            mHomePresenter.downloadUpdatePackage(updateDetail.getUrl(), "mnt/sdcard/test.ppk");
+        else
+            mHomePresenter.downloadUpdatePackage(updateDetail.getUrl(), "mnt/sdcard/test.spk");
+
     }
 
     @Override
@@ -217,18 +224,50 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
     }
 
     @Override
-    public void downloadUpdatePackage(float progress) {
+    public void startDownloadPackage(String savePath) {
+        Log.e(TAG, "开始下载更新包");
+        showLoadingDialog("开始下载更新包");
+        tvVersionState.setText("开始下载更新包");
 
+    }
+
+    @Override
+    public void updateDownloadProgress(final float progress) {
+        Log.e(TAG, "下载进度： " + progress);
+        showLoadingDialog("下载进度：" + progress + "%");
+        tvVersionState.setText("下载进度：" + progress + "%");
     }
 
     @Override
     public void downloadFailure(Throwable throwable) {
-
+        Log.e(TAG, "下载失败: " + throwable.getMessage());
+        Log.e(TAG, "downloadFailure thread name: " + Thread.currentThread().getName());
+        tvVersionState.setText("下载失败 ... ");
     }
 
     @Override
-    public void downloadSuccess() {
+    public void downloadSuccess(String savePath) {
+        Log.e(TAG, "下载成功");
+        tvVersionState.setText("下载成功，开始更新系统 ... ");
+        Log.e(TAG, "downloadSuccess thread name: " + Thread.currentThread().getName());
 
+
+//        showLoadingDialog("下载成功，正在准备更新系统 ...");
+//
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+        UpdatePpkPresenter mUpdatePpkPresenter = new UpdatePpkPresenter(this, this);
+        mUpdatePpkPresenter.updateSystem(new File(savePath));
+    }
+
+    @Override
+    public void dismissDownloadProgress() {
+        dismissLoadingDialog();
+        Log.e(TAG, "dismissDownloadProgress thread name: " + Thread.currentThread().getName());
     }
 
     @Override

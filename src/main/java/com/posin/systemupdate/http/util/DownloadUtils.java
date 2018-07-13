@@ -1,9 +1,12 @@
 package com.posin.systemupdate.http.util;
 
+import android.util.Log;
+
 import com.posin.systemupdate.base.Constant;
 import com.posin.systemupdate.http.api.UpdateApi;
 import com.posin.systemupdate.module.download.DownloadInterceptor;
 import com.posin.systemupdate.module.download.DownloadListener;
+import com.posin.systemupdate.ui.contract.HomeContract;
 
 import org.reactivestreams.Subscriber;
 
@@ -25,6 +28,10 @@ import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
+import static android.content.ContentValues.TAG;
+import static com.google.common.collect.EnumMultiset.create;
+import static com.posin.systemupdate.http.util.RetrofitUtil.getRetrofit;
+
 
 /**
  * FileName: DownloadUtils
@@ -34,99 +41,42 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
  */
 public class DownloadUtils {
 
-    private DownloadListener mDownloadListener;
+    private static UpdateApi mUpdateApi;
     private static final int DEFAULT_TIMEOUT = 15;
-    private Retrofit retrofit;
+    private static OkHttpClient okHttpClient;
+    private static Retrofit retrofit;
 
 
-    public DownloadUtils(DownloadListener downloadListener) {
-        this.mDownloadListener = downloadListener;
+    static Retrofit getDownloadRetrofit(HomeContract.IHomeView homeView) {
 
-        DownloadInterceptor mInterceptor = new DownloadInterceptor(mDownloadListener);
+        DownloadInterceptor mInterceptor = new DownloadInterceptor(homeView);
 
-        OkHttpClient httpClient = new OkHttpClient.Builder()
-                .addInterceptor(mInterceptor)
-                .retryOnConnectionFailure(true)
-                .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
-                .build();
-
-        retrofit = new Retrofit.Builder()
-                .baseUrl("http://123.207.152.101:88")
-                .client(httpClient)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build();
-    }
-
-    /**
-     * 开始下载
-     *
-     * @param url
-     * @param filePath
-     * @param observer
-     */
-    public void download(@NonNull String url, final String filePath, Observer observer) {
-
-        mDownloadListener.onStartDownload();
-
-        // subscribeOn()改变调用它之前代码的线程
-        // observeOn()改变调用它之后代码的线程
-        //
-        retrofit.create(UpdateApi.class)
-                .download(url)
-                .subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .map(new Function<ResponseBody, InputStream>() {
-
-                    @Override
-                    public InputStream apply(@NonNull ResponseBody responseBody) throws Exception {
-                        return responseBody.byteStream();
-                    }
-
-                })
-                .observeOn(Schedulers.computation()) // 用于计算任务
-                .doOnNext(new Consumer<InputStream>() {
-                    @Override
-                    public void accept(InputStream inputStream) throws Exception {
-                        writeFile(inputStream,filePath);
-                    }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
-
-    }
-
-    /**
-     * 将输入流写入文件
-     *
-     * @param inputString
-     * @param filePath
-     */
-    private void writeFile(InputStream inputString, String filePath) {
-
-        File file = new File(filePath);
-        if (file.exists()) {
-            file.delete();
+        if (okHttpClient == null) {
+            okHttpClient = new OkHttpClient.Builder()
+                    .addInterceptor(mInterceptor)
+                    .retryOnConnectionFailure(true)
+                    .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                    .build();
         }
 
-        FileOutputStream fos = null;
-        try {
-//            file.createNewFile();
-
-            fos = new FileOutputStream(file);
-
-            byte[] b = new byte[1024*5];
-
-            int len;
-            while ((len = inputString.read(b)) != -1) {
-                fos.write(b, 0, len);
-            }
-            inputString.close();
-            fos.close();
-
-        } catch (Exception e) {
-            mDownloadListener.onFail(e);
+        if (retrofit == null) {
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(Constant.API_BASE_URL)
+                    .client(okHttpClient)
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .build();
         }
-
+        Log.e(TAG, "DownloadUtils method .....");
+        return retrofit;
     }
+
+    static UpdateApi getUpdateApi(HomeContract.IHomeView homeView) {
+        if (mUpdateApi == null) {
+            mUpdateApi = getDownloadRetrofit(homeView).create(UpdateApi.class);
+        }
+        return mUpdateApi;
+    }
+
+
 }
 
