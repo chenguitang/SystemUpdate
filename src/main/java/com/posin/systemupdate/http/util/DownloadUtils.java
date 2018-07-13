@@ -51,7 +51,7 @@ public class DownloadUtils {
                 .build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://shouji.360tpcdn.com")
+                .baseUrl("http://123.207.152.101:88")
                 .client(httpClient)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();

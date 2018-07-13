@@ -26,4 +26,8 @@
     <color name="common_divider_wide">@color/light_white</color>
 
 
+
+    <color name="colorCirBtnNormal">#1ad29e</color>
+    <color name="colorCirBtnPress">#00ae7d</color>
+
 </resources>

@@ -10,39 +10,33 @@ public class UpdateDetail {
 
 
     /**
-     * id : 123
-     * instruction : 11
-     * updatetype : 1
-     * type : 1
-     * devices : abc.def
-     * date : 2017‐08‐31
-     * url : http://139.199.36.31:2801/monit/uploadfile/20170831155856100904117.pdf
-     * version : 1.1
+     * url : http://123.207.152.101/image-web/appstore/app/201807/20180712103337022_773277.spk
+     * instruction : 修复已知bug，优化用户体验，更新开机画面
+     * uploaddate : 2018-07-12 10:33:40.0
+     * version : V1.2.14
      */
 
-    //更新包ID
-    private String id;
-    //更新包说明
-    private String instruction;
-    //更新类型 立即更新、空闲更新
-    private String updatetype;
-    //更新包属性 PPK、SPK
-    private String type;
-    //适用设备型号
-    private String devices;
-    //日期
-    private String date;
-    //更新包下载地址
     private String url;
-    //更新包版本号
+    private String instruction;
+    private String uploaddate;
     private String version;
 
-    public String getId() {
-        return id;
+    public UpdateDetail(String url, String instruction, String uploaddate, String version) {
+        this.url = url;
+        this.instruction = instruction;
+        this.uploaddate = uploaddate;
+        this.version = version;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public UpdateDetail() {
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getInstruction() {
@@ -53,44 +47,12 @@ public class UpdateDetail {
         this.instruction = instruction;
     }
 
-    public String getUpdatetype() {
-        return updatetype;
+    public String getUploaddate() {
+        return uploaddate;
     }
 
-    public void setUpdatetype(String updatetype) {
-        this.updatetype = updatetype;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getDevices() {
-        return devices;
-    }
-
-    public void setDevices(String devices) {
-        this.devices = devices;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
+    public void setUploaddate(String uploaddate) {
+        this.uploaddate = uploaddate;
     }
 
     public String getVersion() {
@@ -104,13 +66,9 @@ public class UpdateDetail {
     @Override
     public String toString() {
         return "UpdateDetail{" +
-                "id='" + id + '\'' +
+                "url='" + url + '\'' +
                 ", instruction='" + instruction + '\'' +
-                ", updatetype='" + updatetype + '\'' +
-                ", type='" + type + '\'' +
-                ", devices='" + devices + '\'' +
-                ", date='" + date + '\'' +
-                ", url='" + url + '\'' +
+                ", uploaddate='" + uploaddate + '\'' +
                 ", version='" + version + '\'' +
                 '}';
     }

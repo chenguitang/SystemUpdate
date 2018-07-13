@@ -8,6 +8,7 @@ import retrofit2.http.GET;
 import retrofit2.http.HEAD;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Streaming;
 import retrofit2.http.Url;
@@ -24,14 +25,12 @@ public interface UpdateApi {
      * 查询更新包
      *
      * @param devices 设备型号
-     * @param type    更新包属性（SPK=1，PPK=2）
-     * @param version 系统版本
+     * @param type    更新包属性（SPK，PPK）
      * @return Observable<UpdateDetail>
      */
-    @POST("/monit/advertisementControl/queryversions.do")
-    Observable<UpdateDetail> findUpdatePackage(@Query("devices") String devices,
-                                               @Query("type") String type,
-                                               @Query("version") String version);
+    @POST("basemonit/advertisementControl/querypackage.do")
+    Observable<UpdateDetail> findUpdatePackage(@Query("suitabletype") String devices,
+                                               @Query("packageproperty") String type);
 
     /**
      * 下载文件

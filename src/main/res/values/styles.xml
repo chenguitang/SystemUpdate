@@ -20,6 +20,7 @@
     </style>
 
 
+    <!--toolbar样式-->
     <style name="Theme.ToolBar.Menu" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <!-- 设置-弹窗的背景-颜色-->
         <item name="android:colorBackground">@color/common_bg</item>
@@ -53,7 +54,7 @@
         <item name="android:dividerHeight">0.5dp</item>
     </style>
 
-
+    <!--Activity设置为dialog，样式参考值-->
     <style name="DialogTheme" parent="@android:style/Theme.Dialog">
         <!-- 边框 -->
         <item name="android:windowFrame">@null</item>
@@ -67,6 +68,23 @@
         <item name="android:windowBackground">@android:color/transparent</item>
         <!-- 模糊 -->
         <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <!--显示加载进度弹框样式-->
+    <style name="LoadingDialog">
+        <!--边框-->
+        <item name="android:windowFrame">@null</item>
+        <!--是否悬浮在Activity之上-->
+        <item name="android:windowIsFloating">true</item>
+        <!--半透明-->
+        <item name="android:windowIsTranslucent">false</item>
+        <!--无标题-->
+        <item name="android:windowNoTitle">true</item>
+        <!--背景-->
+        <item name="android:windowBackground">@drawable/shape_loading_dialog</item>
+        <!--模糊-->
+        <item name="android:backgroundDimEnabled">false</item>
+        <!--<item name="android:backgroundDimAmount">0.8</item>-->
     </style>
 
 </resources>

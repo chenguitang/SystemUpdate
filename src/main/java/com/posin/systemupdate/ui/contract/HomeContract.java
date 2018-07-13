@@ -1,6 +1,7 @@
 package com.posin.systemupdate.ui.contract;
 
 import com.posin.systemupdate.base.BaseContract;
+import com.posin.systemupdate.bean.UpdateDetail;
 
 /**
  * FileName: HomeContract
@@ -16,22 +17,22 @@ public interface HomeContract {
         /**
          * 显示正在查找更新包进度提示
          */
-        void showProgress();
+        void showSearchProgress();
 
         /**
          * 隐藏正在查找更新包进度提示
          */
-        void dismissProgress();
+        void dismissSearchProgress();
 
         /**
          * 查找成功,不需要更新系统
          */
-        void unNeedUpdate();
+        void unNeedUpdate(String type);
 
         /**
          * 查找成功,有新更新包，需更新系统
          */
-        void needToUpdate();
+        void needToUpdate(String type, UpdateDetail updateDetail);
 
         /**
          * 查找失败
@@ -57,6 +58,11 @@ public interface HomeContract {
         void downloadSuccess();
 
         /**
+         * 隐藏下载更新包进度提示
+         */
+        void dismissDowloadProgress();
+
+        /**
          * 更新PPK成功
          */
         void UpdatePpkSuccess();
@@ -68,21 +74,21 @@ public interface HomeContract {
 
     }
 
-    interface IHomePresenter extends BaseContract.BasePresenter{
+    interface IHomePresenter extends BaseContract.BasePresenter {
 
         /**
          * @param devices 适用设备型号
          * @param type    更新包属性（SPK=1，PPK=2）
-         * @param version 更新包版本号
          */
-        void searchUpdatePackage(String devices, String type, String version);
+        void searchUpdatePackage(String devices, String type);
 
         /**
          * 下载更新包
          *
-         * @param url 下载地址
+         * @param url      下载地址
+         * @param savePath 文件保存地址
          */
-        void downloadUpdatePackage(String url);
+        void downloadUpdatePackage(String url, String savePath);
 
         /**
          * 更新PPK

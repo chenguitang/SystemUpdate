@@ -51,5 +51,11 @@
     <string name="str_external_storage">外部SD存储器</string>
     <string name="str_usb_storage">USB存储器</string>
     <string name="str_other_external_storage">外部存储器</string>
+    <string name="current_path">当前路径</string>
+    <string name="action_settings">设置</string>
+    <string name="strDownloadFinish">下载完成</string>
+
+    <string name="btn_check_update">检查更新</string>
+    <string name="dialog_loading_default_title">加载中</string>
 
 </resources>

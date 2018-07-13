@@ -53,4 +53,6 @@
     <string name="str_external_storage">External Storage</string>
     <string name="str_usb_storage">USB Storage</string>
     <string name="str_other_external_storage">External Storage</string>
+    <string name="btn_check_update">Check the update</string>
+    <string name="dialog_loading_default_title">Loading</string>
 </resources>

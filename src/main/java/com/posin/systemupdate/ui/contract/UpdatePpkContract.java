@@ -12,14 +12,14 @@ import java.io.File;
  */
 public interface UpdatePpkContract {
 
-    public interface updatePpkView extends BaseContract.BaseView {
+    interface updatePpkView extends BaseContract.BaseView {
 
         void updateFailure();
 
         void updateSuccess();
     }
 
-    public interface updatePpkPresenter extends BaseContract.BasePresenter {
+    interface updatePpkPresenter extends BaseContract.BasePresenter {
 
         void updateSystem(File path);
     }

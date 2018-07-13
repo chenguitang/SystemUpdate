@@ -14,7 +14,7 @@ import okhttp3.ResponseBody;
  */
 public class HttpClient extends RetrofitUtil {
 
-    private static class HttppClientHolder {
+    private static class HttpClientHolder {
         private static final HttpClient INSTANCE = new HttpClient();
     }
 
@@ -23,7 +23,7 @@ public class HttpClient extends RetrofitUtil {
     }
 
     public static HttpClient getInstance() {
-        return HttppClientHolder.INSTANCE;
+        return HttpClientHolder.INSTANCE;
     }
 
     /**
@@ -31,11 +31,10 @@ public class HttpClient extends RetrofitUtil {
      *
      * @param devices 设备型号
      * @param type    更新包类型
-     * @param version 系统版本
      * @return TODO
      */
-    public Observable<UpdateDetail> findUpdatePackage(String devices, String type, String version) {
-        return getUpdateApi().findUpdatePackage(devices, type, version);
+    public Observable<UpdateDetail> findUpdatePackage(String devices, String type) {
+        return getUpdateApi().findUpdatePackage(devices, type);
     }
 
     /**

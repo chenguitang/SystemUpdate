@@ -1,34 +1,33 @@
 package com.posin.systemupdate.ui.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.view.menu.MenuBuilder;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.posin.systemupdate.R;
 import com.posin.systemupdate.base.BaseActivity;
+import com.posin.systemupdate.bean.UpdateDetail;
 import com.posin.systemupdate.http.util.DownloadUtils;
-import com.posin.systemupdate.http.util.HttpClient;
 import com.posin.systemupdate.module.download.DownloadListener;
+import com.posin.systemupdate.ui.contract.HomeContract;
 import com.posin.systemupdate.ui.contract.UpdatePpkContract;
+import com.posin.systemupdate.ui.presenter.HomePresenter;
 import com.posin.systemupdate.ui.presenter.UpdatePpkPresenter;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Method;
 
-import io.reactivex.Observer;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import okhttp3.ResponseBody;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * FileName: MainActivity
@@ -36,14 +35,22 @@ import okhttp3.ResponseBody;
  * Time: 2018/5/23 20:06
  * Desc: 在线更新系统主界面
  */
-public class MainActivity extends BaseActivity implements UpdatePpkContract.updatePpkView {
+public class MainActivity extends BaseActivity implements UpdatePpkContract.updatePpkView, HomeContract.IHomeView {
 
     private static final String TAG = "MainActivity";
     private static final String[] PPK_EXT = {".ppk"};
 
-    private static final String savePath = "/mnt/sdcard/test.apk";
+    @BindView(R.id.btn_check_update)
+    Button btnCheckUpdate;
+    @BindView(R.id.tv_update_version)
+    TextView tvUpdateVersion;
+    @BindView(R.id.tv_update_date)
+    TextView tvUpdateDate;
+    @BindView(R.id.tv_version_state)
+    TextView tvVersionState;
 
-    private UpdatePpkPresenter mUpdatePpkPresenter;
+    private HomePresenter mHomePresenter;
+    private String mModel = "M102L";
 
     @Override
     public int getLayoutId() {
@@ -52,102 +59,10 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
 
     @Override
     public void initData() {
-
-//        mUpdatePpkPresenter = new UpdatePpkPresenter(this, this);
-//        mUpdatePpkPresenter.updateSystem(new File("/mnt/media_rw/BC3D-FF39/ppk/" +
-//                "安装广告系统-20180602-01.ppk"));
-
-//        String url = "http://123.207.152.101/image-web/adv/201806/20180602114116852_474206.mp4";
-//        String url = "http://andl.guopan.cn/103373-20539-1526513074.apk";
-        String url = "http://shouji.360tpcdn.com/180514/ca679c25433a751cc4ef5c5379a1ea9a/com.popcap.pvz2cthd360_895.apk";
-//        download(url);
-
-        new DownloadUtils(new DownloadListener() {
-            @Override
-            public void onStartDownload() {
-                Log.e(TAG, "**** onStartDownload ****");
-            }
-
-            @Override
-            public void onProgress(int progress) {
-                Log.e(TAG, "**** onProgress ****: " + progress);
-
-            }
-
-            @Override
-            public void onFinishDownload() {
-                Log.e(TAG, "**** onFinishDownload ****");
-
-            }
-
-            @Override
-            public void onFail(Exception exception) {
-                Log.e(TAG, "**** onFail ****: " + exception.getMessage());
-                exception.printStackTrace();
-            }
-        }).download("/180514/ca679c25433a751cc4ef5c5379a1ea9a/com.popcap.pvz2cthd360_895.apk",
-                "/mnt/sdcard/greetty.apk", null);
-
+        mHomePresenter = new HomePresenter(this);
+        mModel = "302.100.102";
     }
 
-
-    /**
-     * 下载文件
-     *
-     * @param url 下载地址
-     */
-    public void download(String url) {
-        Log.e(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-
-//        HttpClient.getInstance().download(url)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(Schedulers.io())
-//                .subscribe(new Observer<ResponseBody>() {
-//                    @Override
-//                    public void onSubscribe(@NonNull Disposable d) {
-//                        Log.e(TAG, " ==    onSubscribe   ==  ");
-//                    }
-//
-//                    @Override
-//                    public void onNext(@NonNull ResponseBody responseBody) {
-//                        Log.e(TAG, " ==    onNext   ==  ");
-//                        try {
-//
-//                            InputStream inputStream = responseBody.byteStream();
-//                            OutputStream os = new FileOutputStream(savePath);
-//                            long fileSize = responseBody.contentLength();
-//                            Log.e(TAG, "responsebody size: " + fileSize);
-//                            int len = 0;
-//                            byte[] bytes = new byte[1024 * 2];
-//                            long total = 0;
-//                            while ((len = inputStream.read(bytes)) != -1) {
-//                                total += len;
-//                                Log.e(TAG, "length: " + len + "     " + (total * 100 / fileSize) + "%");
-//                                os.write(bytes, 0, len);
-//                            }
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(@NonNull Throwable e) {
-//                        Log.e(TAG, " ==    onError   ==  ");
-//                        Log.e(TAG, "Error: " + e.getMessage());
-//                        e.printStackTrace();
-//                    }
-//
-//                    @Override
-//                    public void onComplete() {
-//                        Log.e(TAG, " ==    onComplete   ==  ");
-//
-//                    }
-//                });
-
-        Log.e(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n");
-    }
 
     @Override
     public void initToolBar() {
@@ -156,16 +71,17 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
 
     }
 
-    /**
-     * 加载菜单按钮
-     *
-     * @param menu Menu
-     * @return boolean
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    @OnClick({R.id.btn_check_update})
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_check_update:
+//                showLoadingDialog("正在查找更新包");
+//                mHomePresenter.searchUpdatePackage("M102L", "spk");
+                mHomePresenter.searchUpdatePackage(mModel, "spk");
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -180,7 +96,7 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
         switch (itemId) {
             case R.id.offline_update:
                 startActivityForResult(new Intent(this, SelectFileActivity.class), 100);
-                Toast.makeText(mContext, "进入离线更新模式", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext, "进入离线更新模式", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.system_exit:
                 finish();
@@ -192,19 +108,19 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
         return super.onOptionsItemSelected(item);
     }
 
+
+    /**
+     * 加载菜单按钮
+     *
+     * @param menu Menu
+     * @return boolean
+     */
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode == 100 && resultCode == 101) {
-            String path = intent.getStringExtra("Path");
-            if (!TextUtils.isEmpty(path)) {
-                Log.e(TAG, "now update system ... ");
-                mUpdatePpkPresenter = new UpdatePpkPresenter(this, this);
-                mUpdatePpkPresenter.updateSystem(new File(path));
-            } else {
-                Log.e(TAG, "have cancel select path");
-            }
-        }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
+
 
     /**
      * 显示菜单Item中的图片
@@ -231,6 +147,21 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
         return super.onPreparePanel(featureId, view, menu);
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == 100 && resultCode == 101) {
+            String path = intent.getStringExtra("Path");
+            if (!TextUtils.isEmpty(path)) {
+                Log.e(TAG, "now update system ... ");
+                UpdatePpkPresenter mUpdatePpkPresenter = new UpdatePpkPresenter(this, this);
+                mUpdatePpkPresenter.updateSystem(new File(path));
+            } else {
+                Log.e(TAG, "have cancel select path");
+            }
+        }
+    }
+
     @Override
     public void updateFailure() {
         Log.e(TAG, "更新失败 。。。");
@@ -239,5 +170,74 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
     @Override
     public void updateSuccess() {
         Log.e(TAG, "更新成功。。。");
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
+    }
+
+    @Override
+    public void showSearchProgress() {
+        showLoadingDialog("正在查找更新包 ... ");
+        tvVersionState.setText("正在查找更新包 ... ");
+    }
+
+    @Override
+    public void dismissSearchProgress() {
+        dismissLoadingDialog();
+    }
+
+    @Override
+    public void unNeedUpdate(String type) {
+        if (type.toLowerCase().equals("spk")) {
+            mHomePresenter.searchUpdatePackage(mModel, "ppk");
+        } else {
+            Toast.makeText(this, "已是最新版本，无法更新系统 ... ", Toast.LENGTH_SHORT).show();
+            tvVersionState.setText("已是最新版本，无法更新系统 ... ");
+        }
+    }
+
+    @Override
+    public void needToUpdate(String type, UpdateDetail updateDetail) {
+        tvVersionState.setText("更新内容：" + updateDetail.getInstruction() +
+                "\n更新包版本为：" + updateDetail.getVersion() +
+                "\n更新包上传时间：" + updateDetail.getUploaddate());
+
+    }
+
+    @Override
+    public void searchFailure(Throwable throwable) {
+        Toast.makeText(this, "查找失败，请重新查找更新包: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+        tvVersionState.setText("查找失败，请重新查找更新包");
+        Log.e(TAG, "查找失败: " + throwable.getMessage());
+        throwable.printStackTrace();
+    }
+
+    @Override
+    public void downloadUpdatePackage(float progress) {
+
+    }
+
+    @Override
+    public void downloadFailure(Throwable throwable) {
+
+    }
+
+    @Override
+    public void downloadSuccess() {
+
+    }
+
+    @Override
+    public void UpdatePpkSuccess() {
+
+    }
+
+    @Override
+    public void UpdatePplFailure(Throwable throwable) {
+
     }
 }
