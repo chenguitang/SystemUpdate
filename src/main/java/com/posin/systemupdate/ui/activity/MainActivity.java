@@ -99,59 +99,59 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
     public void download(String url) {
         Log.e(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
-        HttpClient.getInstance().download(url)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe(new Observer<ResponseBody>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                        Log.e(TAG, " ==    onSubscribe   ==  ");
-                    }
-
-                    @Override
-                    public void onNext(@NonNull ResponseBody responseBody) {
-                        Log.e(TAG, " ==    onNext   ==  ");
-                        try {
-
-                            InputStream inputStream = responseBody.byteStream();
-                            OutputStream os = new FileOutputStream(savePath);
-                            long fileSize = responseBody.contentLength();
-                            Log.e(TAG, "responsebody size: " + fileSize);
-                            int len = 0;
-                            byte[] bytes = new byte[1024 * 2];
-                            long total = 0;
-                            while ((len = inputStream.read(bytes)) != -1) {
-                                total += len;
-                                Log.e(TAG, "length: " + len + "     " + (total * 100 / fileSize) + "%");
-                                os.write(bytes, 0, len);
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        Log.e(TAG, " ==    onError   ==  ");
-                        Log.e(TAG, "Error: " + e.getMessage());
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.e(TAG, " ==    onComplete   ==  ");
-
-                    }
-                });
+//        HttpClient.getInstance().download(url)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(Schedulers.io())
+//                .subscribe(new Observer<ResponseBody>() {
+//                    @Override
+//                    public void onSubscribe(@NonNull Disposable d) {
+//                        Log.e(TAG, " ==    onSubscribe   ==  ");
+//                    }
+//
+//                    @Override
+//                    public void onNext(@NonNull ResponseBody responseBody) {
+//                        Log.e(TAG, " ==    onNext   ==  ");
+//                        try {
+//
+//                            InputStream inputStream = responseBody.byteStream();
+//                            OutputStream os = new FileOutputStream(savePath);
+//                            long fileSize = responseBody.contentLength();
+//                            Log.e(TAG, "responsebody size: " + fileSize);
+//                            int len = 0;
+//                            byte[] bytes = new byte[1024 * 2];
+//                            long total = 0;
+//                            while ((len = inputStream.read(bytes)) != -1) {
+//                                total += len;
+//                                Log.e(TAG, "length: " + len + "     " + (total * 100 / fileSize) + "%");
+//                                os.write(bytes, 0, len);
+//                            }
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(@NonNull Throwable e) {
+//                        Log.e(TAG, " ==    onError   ==  ");
+//                        Log.e(TAG, "Error: " + e.getMessage());
+//                        e.printStackTrace();
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//                        Log.e(TAG, " ==    onComplete   ==  ");
+//
+//                    }
+//                });
 
         Log.e(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n");
     }
 
     @Override
     public void initToolBar() {
-        mCommonToolbar.setLogo(R.mipmap.ic_launcher2);
+        mCommonToolbar.setLogo(R.mipmap.ic_toolbar_logo);
         mCommonToolbar.setTitle(R.string.app_name);
 
     }

@@ -114,7 +114,7 @@ public class DownloadUtils {
 
             fos = new FileOutputStream(file);
 
-            byte[] b = new byte[1024];
+            byte[] b = new byte[1024*5];
 
             int len;
             while ((len = inputString.read(b)) != -1) {
