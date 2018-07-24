@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="CircleProgressBar">
+        <!--外圆颜色-->
+        <attr name="outside_color" format="color" />
+        <!--外圆半径-->
+        <attr name="outside_radius" format="dimension" />
+        <!--内圆颜色-->
+        <attr name="inside_color" format="color" />
+        <!--内圆半径-->
+        <attr name="inside_radius" format="dimension" />
+        <!--进度条文字颜色-->
+        <attr name="progress_text_color" format="color" />
+        <!--进度条文字大小-->
+        <attr name="progress_text_size" format="dimension" />
+        <!--进度条默认文字-->
+        <attr name="progress_default_text" format="string" />
+        <!--最大进度-->
+        <attr name="max_progress_size" format="integer" />
+        <!--当前进度-->
+        <attr name="current_progress" format="integer"/>
+        <!--进度条开始位置-->
+        <attr name="direction">
+            <enum name="left" value="0" />
+            <enum name="top" value="1" />
+            <enum name="right" value="2" />
+            <enum name="bottom" value="3" />
+        </attr>
+
+    </declare-styleable>
+
+</resources>

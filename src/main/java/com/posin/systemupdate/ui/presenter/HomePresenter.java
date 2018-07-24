@@ -98,6 +98,7 @@ public class HomePresenter implements HomeContract.IHomePresenter {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         mHomeView.downloadFailure(throwable);
+                        Log.e(TAG, "Error: "+throwable.getMessage());
                         mHomeView.dismissDownloadProgress();
                     }
                 })

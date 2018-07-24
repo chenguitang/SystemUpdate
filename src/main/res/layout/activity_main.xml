@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -13,14 +14,28 @@
 
     <Button
         android:id="@+id/btn_check_update"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="180dp"
         android:background="@drawable/selector_circle_btn"
         android:text="@string/btn_check_update"
         android:textColor="@color/light_white"
         android:textSize="22sp" />
+
+    <com.posin.systemupdate.view.CircleProgressBar
+        android:id="@+id/cpb_progress"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:layout_marginLeft="100dp"
+        android:visibility="gone"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="50dp"
+        app:inside_radius="110dp"
+        app:direction="top"
+        app:progress_text_size="22dp"
+        app:max_progress_size="100"
+        app:progress_default_text="检查更新" />
 
 
     <RelativeLayout
@@ -42,12 +57,12 @@
             android:id="@+id/tv_update_version"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginStart="15dp"
-            android:textSize="18sp"
             android:layout_above="@id/view_update_state_line"
             android:layout_marginBottom="10dp"
-            android:text="当前版本:1.1.7" />
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:text="当前版本:1.1.7"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/tv_update_date"
@@ -55,23 +70,23 @@
             android:layout_height="wrap_content"
             android:layout_above="@id/view_update_state_line"
             android:layout_marginBottom="10dp"
-            android:textSize="18sp"
             android:layout_marginLeft="35dp"
             android:layout_marginStart="35dp"
             android:layout_toEndOf="@id/tv_update_version"
             android:layout_toRightOf="@id/tv_update_version"
-            android:text="发布日期:2018-06-09 第二版" />
+            android:text="发布日期:2018-06-09 第二版"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/tv_version_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/view_update_state_line"
             android:layout_marginLeft="15dp"
             android:layout_marginStart="15dp"
-            android:layout_below="@id/view_update_state_line"
-            android:textSize="18sp"
             android:layout_marginTop="10dp"
-            android:text="当前已是最新版本" />
+            android:text="当前已是最新版本"
+            android:textSize="18sp" />
 
     </RelativeLayout>
 </RelativeLayout>

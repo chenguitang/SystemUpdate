@@ -5,4 +5,15 @@
 
     <!--listView分割线高度-->
     <dimen name="list_view_divider_height">0.5dp</dimen>
+
+    <!--圆形进度条外圆大小-->
+    <dimen name="circle_progress_outside_radius">10dp</dimen>
+    <!--圆形进度条内圆大小-->
+    <dimen name="circle_progress_inside_radius">80dp</dimen>
+    <!--圆形进度条文字大小-->
+    <dimen name="circle_progress_text_size">18dp</dimen>
+    <!--圆形进度条最大进度-->
+    <dimen name="circle_progress_max_progress">100dp</dimen>
+    <!--当前进度-->
+    <dimen name="circle_progress_current_progress">1dp</dimen>
 </resources>

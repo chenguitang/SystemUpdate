@@ -25,9 +25,18 @@
     <!--通用分割线粗-->
     <color name="common_divider_wide">@color/light_white</color>
 
-
-
+    <!--圆形按钮正常显示背景颜色-->
     <color name="colorCirBtnNormal">#1ad29e</color>
+    <!--圆形按钮被按下时显示背景颜色-->
     <color name="colorCirBtnPress">#00ae7d</color>
+
+    <!--圆形进度条内圆颜色-->
+    <color name="colorCirProInside">#1ad29e</color>
+    <!--圆形进度条外圆颜色-->
+    <color name="colorCirProOutside">#00ae7d</color>
+    <!--进度条文字颜色-->
+    <color name="colorCirProText">#FFFFFF</color>
+
+    <color name="colorDialogLine">#C6C6C6</color>
 
 </resources>

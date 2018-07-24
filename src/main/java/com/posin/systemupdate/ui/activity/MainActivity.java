@@ -15,12 +15,13 @@ import android.widget.Toast;
 import com.posin.systemupdate.R;
 import com.posin.systemupdate.base.BaseActivity;
 import com.posin.systemupdate.bean.UpdateDetail;
-import com.posin.systemupdate.http.util.DownloadUtils;
-import com.posin.systemupdate.module.download.DownloadListener;
 import com.posin.systemupdate.ui.contract.HomeContract;
 import com.posin.systemupdate.ui.contract.UpdatePpkContract;
 import com.posin.systemupdate.ui.presenter.HomePresenter;
 import com.posin.systemupdate.ui.presenter.UpdatePpkPresenter;
+import com.posin.systemupdate.utils.StringUtils;
+import com.posin.systemupdate.utils.SystemUtils;
+import com.posin.systemupdate.view.ConfirmDownloadDialog;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -29,7 +30,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static android.R.attr.path;
 
 /**
  * FileName: MainActivity
@@ -37,7 +37,8 @@ import static android.R.attr.path;
  * Time: 2018/5/23 20:06
  * Desc: 在线更新系统主界面
  */
-public class MainActivity extends BaseActivity implements UpdatePpkContract.updatePpkView, HomeContract.IHomeView {
+public class MainActivity extends BaseActivity implements UpdatePpkContract.updatePpkView,
+        HomeContract.IHomeView, ConfirmDownloadDialog.ConfirmDialogListener {
 
     private static final String TAG = "MainActivity";
     private static final String[] PPK_EXT = {".ppk"};
@@ -50,6 +51,7 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
     TextView tvUpdateDate;
     @BindView(R.id.tv_version_state)
     TextView tvVersionState;
+
 
     private HomePresenter mHomePresenter;
     private String mModel = "M102L";
@@ -80,6 +82,7 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
 //                showLoadingDialog("正在查找更新包");
 //                mHomePresenter.searchUpdatePackage("M102L", "spk");
                 mHomePresenter.searchUpdatePackage(mModel, "spk");
+
                 break;
             default:
                 break;
@@ -204,14 +207,17 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
 
     @Override
     public void needToUpdate(String type, UpdateDetail updateDetail) {
-        tvVersionState.setText("更新内容：" + updateDetail.getInstruction() +
-                "\n更新包版本为：" + updateDetail.getVersion() +
-                "\n更新包上传时间：" + updateDetail.getUploaddate());
 
-        if (type.toLowerCase().equals("ppk"))
-            mHomePresenter.downloadUpdatePackage(updateDetail.getUrl(), "mnt/sdcard/test.ppk");
-        else
-            mHomePresenter.downloadUpdatePackage(updateDetail.getUrl(), "mnt/sdcard/test.spk");
+        String updateMessage = "更新内容：" + updateDetail.getInstruction() +
+                "\n更新包版本为：" + updateDetail.getVersion() +
+                "\n更新包上传时间：" + updateDetail.getUploaddate();
+
+        tvVersionState.setText(updateMessage);
+
+        String systemVersion = StringUtils.append(SystemUtils.getSystemVersion(),
+                "-", SystemUtils.getSystemDateVersion());
+        new ConfirmDownloadDialog(this, systemVersion, type.toLowerCase().equals("ppk"),
+                updateDetail, this).show();
 
     }
 
@@ -232,10 +238,11 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
     }
 
     @Override
-    public void updateDownloadProgress(final float progress) {
-        Log.e(TAG, "下载进度： " + progress);
-        showLoadingDialog("下载进度：" + progress + "%");
-        tvVersionState.setText("下载进度：" + progress + "%");
+    public void updateDownloadProgress(float progress) {
+//        Log.e(TAG, "下载进度： " + progress);
+        String progressStr = StringUtils.decimalFormat(progress, 2);
+        showLoadingDialog("下载进度：" + progressStr + "%");
+        tvVersionState.setText("下载进度：" + progressStr + "%");
     }
 
     @Override
@@ -250,15 +257,6 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
         Log.e(TAG, "下载成功");
         tvVersionState.setText("下载成功，开始更新系统 ... ");
         Log.e(TAG, "downloadSuccess thread name: " + Thread.currentThread().getName());
-
-
-//        showLoadingDialog("下载成功，正在准备更新系统 ...");
-//
-//        try {
-//            Thread.sleep(2000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
 
         UpdatePpkPresenter mUpdatePpkPresenter = new UpdatePpkPresenter(this, this);
         mUpdatePpkPresenter.updateSystem(new File(savePath));
@@ -277,6 +275,24 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
 
     @Override
     public void UpdatePplFailure(Throwable throwable) {
+
+    }
+
+    @Override
+    public void confirm(boolean isSpk, String downloadUrl) {
+
+        Log.e(TAG, "downloadUrl: "+downloadUrl);
+
+        if (isSpk) {
+            mHomePresenter.downloadUpdatePackage(downloadUrl, "mnt/sdcard/test.spk");
+        } else {
+            mHomePresenter.downloadUpdatePackage(downloadUrl, "mnt/sdcard/test.ppk");
+
+        }
+    }
+
+    @Override
+    public void cancel() {
 
     }
 }

@@ -17,6 +17,7 @@ import okio.BufferedSource;
 import okio.ForwardingSource;
 import okio.Okio;
 import okio.Source;
+import okio.Timeout;
 
 /**
  * FileName: ProgressResponseBody
@@ -28,6 +29,7 @@ public class ProgressResponseBody extends ResponseBody {
 
     private static final String TAG = "ProgressResponseBody";
     private static final int UPDATE_PROGRESS_CODE = 101;
+    private static final int TIMEOUT_CODE = 102;
     private ResponseBody mResponseBody;
     // BufferedSource 是okio库中的输入流，这里就当作inputStream来使用。
     private BufferedSource bufferedSource;
@@ -78,11 +80,11 @@ public class ProgressResponseBody extends ResponseBody {
                 long bytesRead = super.read(sink, byteCount);
                 // read() returns the number of bytes read, or -1 if this source is exhausted.
                 totalBytesRead += bytesRead != -1 ? bytesRead : 0;
-//                Log.e("ProgressResponseBody", "read progress: " + (int) (totalBytesRead * 100 /
+//                Log.e("ProgressResponseBody", "read progress: " + (int) (totalBytesRead * 100.0 /
 //                        mResponseBody.contentLength()));
                 if (null != mHomeView) {
                     if (bytesRead != -1) {
-                        float progress = (float) (totalBytesRead * 100 / mResponseBody.contentLength());
+                        float progress = (float) (totalBytesRead * 100.0 / mResponseBody.contentLength());
                         myHandler.obtainMessage(UPDATE_PROGRESS_CODE, progress).sendToTarget();
 //                        mHomeView.updateDownloadProgress((int) (totalBytesRead * 100 /
 //                                mResponseBody.contentLength()));
@@ -106,8 +108,10 @@ public class ProgressResponseBody extends ResponseBody {
                 case UPDATE_PROGRESS_CODE:
                     float progress = (float) msg.obj;
                     mHomeView.updateDownloadProgress(progress);
-
-
+                    break;
+                case TIMEOUT_CODE:
+                    mHomeView.downloadFailure((Throwable) msg.obj);
+                    break;
                 default:
                     break;
             }
