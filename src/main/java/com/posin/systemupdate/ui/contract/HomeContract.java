@@ -66,16 +66,6 @@ public interface HomeContract {
          */
         void dismissDownloadProgress();
 
-        /**
-         * 更新PPK成功
-         */
-        void UpdatePpkSuccess();
-
-        /**
-         * 更新PPK失败
-         */
-        void UpdatePplFailure(Throwable throwable);
-
     }
 
     interface IHomePresenter extends BaseContract.BasePresenter {

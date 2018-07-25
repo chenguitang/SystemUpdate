@@ -36,6 +36,11 @@ public class UpdatePpkPresenter implements UpdatePpkContract.updatePpkPresenter 
             protected void onInstallSuccess() {
                 mUpdatePpkView.updateSuccess();
             }
+
+            @Override
+            protected void onClickOk() {
+                mUpdatePpkView.onClickOk();
+            }
         };
     }
 

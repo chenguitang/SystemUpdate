@@ -17,6 +17,9 @@ public interface UpdatePpkContract {
         void updateFailure();
 
         void updateSuccess();
+
+        void onClickOk();
+
     }
 
     interface updatePpkPresenter extends BaseContract.BasePresenter {

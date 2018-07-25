@@ -1,7 +1,9 @@
 package com.posin.systemupdate.ui.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.view.menu.MenuBuilder;
 import android.text.TextUtils;
 import android.util.Log;
@@ -9,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,16 +22,21 @@ import com.posin.systemupdate.ui.contract.HomeContract;
 import com.posin.systemupdate.ui.contract.UpdatePpkContract;
 import com.posin.systemupdate.ui.presenter.HomePresenter;
 import com.posin.systemupdate.ui.presenter.UpdatePpkPresenter;
+import com.posin.systemupdate.utils.Proc;
 import com.posin.systemupdate.utils.StringUtils;
 import com.posin.systemupdate.utils.SystemUtils;
 import com.posin.systemupdate.view.ConfirmDownloadDialog;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.posin.systemupdate.R.id.tv_update_date;
+import static com.posin.systemupdate.R.id.tv_update_version;
 
 
 /**
@@ -43,15 +51,18 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
     private static final String TAG = "MainActivity";
     private static final String[] PPK_EXT = {".ppk"};
 
+    @BindView(R.id.rl_main_activity_root)
+    RelativeLayout rlMainActivityRoot;
     @BindView(R.id.btn_check_update)
     Button btnCheckUpdate;
-    @BindView(R.id.tv_update_version)
+    @BindView(tv_update_version)
     TextView tvUpdateVersion;
-    @BindView(R.id.tv_update_date)
+    @BindView(tv_update_date)
     TextView tvUpdateDate;
     @BindView(R.id.tv_version_state)
     TextView tvVersionState;
-
+    @BindView(R.id.view_root_background)
+    View viewRootBackground;
 
     private HomePresenter mHomePresenter;
     private String mModel = "M102L";
@@ -64,9 +75,13 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
     @Override
     public void initData() {
         mHomePresenter = new HomePresenter(this);
-        mModel = "302.100.102";
-    }
+        mModel = SystemUtils.getPosinModel();
+        Log.e(TAG, "====" + mModel + "======");
 
+//        viewRootBackground.setAlpha(0.2f);
+
+        initCurrentVersion();
+    }
 
     @Override
     public void initToolBar() {
@@ -74,6 +89,15 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
         mCommonToolbar.setTitle(R.string.app_name);
 
     }
+
+    /**
+     * 获取当前系统版本并显示
+     */
+    private void initCurrentVersion() {
+        tvUpdateVersion.setText(StringUtils.append("当前版本：", SystemUtils.getSystemVersion()));
+        tvUpdateDate.setText(StringUtils.append("版本日期：", SystemUtils.getSystemDateVersion()));
+    }
+
 
     @OnClick({R.id.btn_check_update})
     public void onClick(View v) {
@@ -168,16 +192,6 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
     }
 
     @Override
-    public void updateFailure() {
-        Log.e(TAG, "更新失败 。。。");
-    }
-
-    @Override
-    public void updateSuccess() {
-        Log.e(TAG, "更新成功。。。");
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
@@ -200,8 +214,8 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
         if (type.toLowerCase().equals("spk")) {
             mHomePresenter.searchUpdatePackage(mModel, "ppk");
         } else {
-            Toast.makeText(this, "已是最新版本，无法更新系统 ... ", Toast.LENGTH_SHORT).show();
-            tvVersionState.setText("已是最新版本，无法更新系统 ... ");
+            Toast.makeText(this, "已是最新版本，无需更新系统...", Toast.LENGTH_SHORT).show();
+            tvVersionState.setText("已是最新版本，无需更新系统");
         }
     }
 
@@ -262,19 +276,45 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
         mUpdatePpkPresenter.updateSystem(new File(savePath));
     }
 
+
+    @Override
+    public void updateFailure() {
+        Log.e(TAG, "更新失败 。。。");
+        tvVersionState.setText("更新失败，请重新下载更新");
+    }
+
+    @Override
+    public void updateSuccess() {
+        Log.e(TAG, "更新成功。。。");
+        tvVersionState.setText("更新成功，请重启机器");
+
+    }
+
+    @Override
+    public void onClickOk() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("更新成功,马上重启！");
+//        builder.setIcon(R.mipmap.icon_launcher);
+//        builder.setMessage("更新成功,马上重启！");
+        builder.setPositiveButton("重启", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    Proc.createSuProcess("reboot");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.setCancelable(false);
+        alertDialog.show();
+    }
+
     @Override
     public void dismissDownloadProgress() {
         dismissLoadingDialog();
-    }
-
-    @Override
-    public void UpdatePpkSuccess() {
-
-    }
-
-    @Override
-    public void UpdatePplFailure(Throwable throwable) {
-
     }
 
     @Override

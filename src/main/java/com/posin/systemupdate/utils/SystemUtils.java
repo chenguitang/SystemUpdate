@@ -39,6 +39,32 @@ public class SystemUtils {
     }
 
     /**
+     * 获取系统名称(系统更新名称标识)
+     *
+     * @return String
+     */
+    public static String getPosinModel() {
+        Properties p = new Properties();
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream("/system/build.prop");
+            p.load(fis);
+            return p.getProperty("ro.posin.model");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * 获取系统版本
      *
      * @return String
