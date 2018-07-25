@@ -248,16 +248,16 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
     @Override
     public void downloadFailure(Throwable throwable) {
         Log.e(TAG, "下载失败: " + throwable.getMessage());
-        Log.e(TAG, "downloadFailure thread name: " + Thread.currentThread().getName());
-        tvVersionState.setText("下载失败 ... ");
+//        tvVersionState.setText(StringUtils.append("下载失败: ", throwable.getMessage()));
+        tvVersionState.setText("下载失败,请重新检查下载");
+        throwable.printStackTrace();
+
     }
 
     @Override
     public void downloadSuccess(String savePath) {
         Log.e(TAG, "下载成功");
         tvVersionState.setText("下载成功，开始更新系统 ... ");
-        Log.e(TAG, "downloadSuccess thread name: " + Thread.currentThread().getName());
-
         UpdatePpkPresenter mUpdatePpkPresenter = new UpdatePpkPresenter(this, this);
         mUpdatePpkPresenter.updateSystem(new File(savePath));
     }
@@ -265,7 +265,6 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
     @Override
     public void dismissDownloadProgress() {
         dismissLoadingDialog();
-        Log.e(TAG, "dismissDownloadProgress thread name: " + Thread.currentThread().getName());
     }
 
     @Override
@@ -281,7 +280,7 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
     @Override
     public void confirm(boolean isSpk, String downloadUrl) {
 
-        Log.e(TAG, "downloadUrl: "+downloadUrl);
+        Log.d(TAG, "downloadUrl: " + downloadUrl);
 
         if (isSpk) {
             mHomePresenter.downloadUpdatePackage(downloadUrl, "mnt/sdcard/test.spk");

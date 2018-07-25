@@ -42,7 +42,8 @@ import static com.posin.systemupdate.http.util.RetrofitUtil.getRetrofit;
 public class DownloadUtils {
 
     private static UpdateApi mUpdateApi;
-    private static final int DEFAULT_TIMEOUT = 15;
+    private static final int DEFAULT_CONNECT_TIMEOUT = 15;
+    private static final int DEFAULT_READ_TIMEOUT = 20;
     private static OkHttpClient okHttpClient;
     private static Retrofit retrofit;
 
@@ -55,7 +56,8 @@ public class DownloadUtils {
             okHttpClient = new OkHttpClient.Builder()
                     .addInterceptor(mInterceptor)
                     .retryOnConnectionFailure(true)
-                    .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                    .readTimeout(DEFAULT_READ_TIMEOUT, TimeUnit.SECONDS) //读写文件超时
+                    .connectTimeout(DEFAULT_CONNECT_TIMEOUT, TimeUnit.SECONDS)//连接超时
                     .build();
         }
 

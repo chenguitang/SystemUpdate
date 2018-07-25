@@ -75,12 +75,6 @@ public class HomePresenter implements HomeContract.IHomePresenter {
     public void downloadUpdatePackage(String url, final String savePath) {
         HttpClient.getInstance().download(url, mHomeView)
                 .subscribeOn(Schedulers.io())
-                .doOnSubscribe(new Consumer<Disposable>() {
-                    @Override
-                    public void accept(Disposable disposable) throws Exception {
-                       mHomeView.startDownloadPackage(savePath);
-                    }
-                })
                 .map(new Function<ResponseBody, InputStream>() {
                     @Override
                     public InputStream apply(@NonNull ResponseBody responseBody) throws Exception {
@@ -94,23 +88,30 @@ public class HomePresenter implements HomeContract.IHomePresenter {
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(new Consumer<Throwable>() {
+                .subscribe(new Observer<InputStream>() {
                     @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        mHomeView.downloadFailure(throwable);
-                        Log.e(TAG, "Error: "+throwable.getMessage());
+                    public void onSubscribe(@NonNull Disposable d) {
+                        mHomeView.startDownloadPackage(savePath);
+                    }
+
+                    @Override
+                    public void onNext(@NonNull InputStream inputStream) {
+
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        mHomeView.downloadFailure(e);
+                        Log.e(TAG, "Error: "+e.getMessage());
                         mHomeView.dismissDownloadProgress();
                     }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnComplete(new Action() {
+
                     @Override
-                    public void run() throws Exception {
+                    public void onComplete() {
                         mHomeView.dismissDownloadProgress();
                         mHomeView.downloadSuccess(savePath);
                     }
-                })
-                .subscribe( );
+                });
     }
 
     @Override
