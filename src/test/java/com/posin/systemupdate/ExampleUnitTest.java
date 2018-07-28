@@ -3,6 +3,8 @@ package com.posin.systemupdate;
 import org.junit.Test;
 
 import java.text.DecimalFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
@@ -16,8 +18,36 @@ public class ExampleUnitTest {
     public void addition_isCorrect() throws Exception {
         assertEquals(4, 2 + 2);
 
-        System.out.println("decimalFormat: " + decimalFormat(542540.2546, 2));
+//        System.out.println("decimalFormat: " + decimalFormat(542540.2546, 2));
+        System.out.println("isNumeric: " + isNumeric("-12154.01254a"));
+        System.out.println("\nisNumericTwo: " + isNumericTwo("-1215401254"));
+
+        String aa = null;
+        System.out.println("ajsdlfjladj:  " +aa.length());
     }
+
+    public final static boolean isNumeric(String s) {
+        if (s != null && !"".equals(s.trim()))
+            return s.matches("^-?[0-9]+.?[0-9]+$");
+        else
+            return false;
+    }
+
+    /**
+     * 判断字符串是否为数字
+     *
+     * @param str
+     * @return
+     */
+    public static boolean isNumericTwo(String str) {
+        Pattern pattern = Pattern.compile("-?[0-9]+.?[0-9]+");
+        Matcher isNum = pattern.matcher(str);
+        if (!isNum.matches()) {
+            return false;
+        }
+        return true;
+    }
+
 
     /**
      * 格式化Double字符

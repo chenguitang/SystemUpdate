@@ -22,18 +22,19 @@ import com.posin.systemupdate.module.update.Installer;
 import java.io.File;
 
 public abstract class InstallerDialog {
-    protected final AlertDialog mDlg;
-    protected final View mView;
-    protected final LinearLayout mLogView;
-    protected final Installer mInstaller;
-    protected final Button mBtnOk;
-    protected final Button mBtnCancel;
+    private final AlertDialog mDlg;
+    private final View mView;
+    private final LinearLayout mLogView;
+    private final Installer mInstaller;
+    private final Button mBtnOk;
+    private final Button mBtnCancel;
+    private boolean updateSuccess = false;
 
     protected abstract void onInstallError();
 
     protected abstract void onInstallSuccess();
 
-    protected abstract void onClickOk();
+    protected abstract void onClickOk(boolean updateSuccess);
 
     public InstallerDialog(Context context, File pkgFile) {
 
@@ -71,8 +72,6 @@ public abstract class InstallerDialog {
             @Override
             protected void onSuccess() {
                 mHandler.obtainMessage(MSG_SUCCESS).sendToTarget();
-//                if (completeDismiss)
-//                    mDlg.dismiss();
             }
         };
 
@@ -85,7 +84,7 @@ public abstract class InstallerDialog {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mDlg.dismiss();
-                        onClickOk();
+                        onClickOk(updateSuccess);
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -157,6 +156,7 @@ public abstract class InstallerDialog {
                     break;
                 }
                 case MSG_SUCCESS:
+                    updateSuccess = true;
                     onInstallSuccess();
                     break;
                 case MSG_ON_START: {

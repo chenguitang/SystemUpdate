@@ -68,6 +68,8 @@ public class ConfirmDownloadDialog extends BaseDialog {
         lp.height = DensityUtils.dp2px(mContext, 367);
         this.getWindow().setAttributes(lp);
 
+        setCancelable(false);
+
         tvCurrentVersion.setText(mCurrentVersion);
         tvUpdateVersion.setText(mUpdateDetail.getVersion());
         tvUploadTime.setText(mUpdateDetail.getUploaddate());

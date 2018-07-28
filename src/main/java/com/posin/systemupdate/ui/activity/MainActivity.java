@@ -19,9 +19,9 @@ import com.posin.systemupdate.R;
 import com.posin.systemupdate.base.BaseActivity;
 import com.posin.systemupdate.bean.UpdateDetail;
 import com.posin.systemupdate.ui.contract.HomeContract;
-import com.posin.systemupdate.ui.contract.UpdatePpkContract;
+import com.posin.systemupdate.ui.contract.UpdateContract;
 import com.posin.systemupdate.ui.presenter.HomePresenter;
-import com.posin.systemupdate.ui.presenter.UpdatePpkPresenter;
+import com.posin.systemupdate.ui.presenter.UpdatePresenter;
 import com.posin.systemupdate.utils.Proc;
 import com.posin.systemupdate.utils.StringUtils;
 import com.posin.systemupdate.utils.SystemUtils;
@@ -35,6 +35,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static android.R.id.message;
 import static com.posin.systemupdate.R.id.tv_update_date;
 import static com.posin.systemupdate.R.id.tv_update_version;
 
@@ -45,7 +46,7 @@ import static com.posin.systemupdate.R.id.tv_update_version;
  * Time: 2018/5/23 20:06
  * Desc: 在线更新系统主界面
  */
-public class MainActivity extends BaseActivity implements UpdatePpkContract.updatePpkView,
+public class MainActivity extends BaseActivity implements UpdateContract.updateView,
         HomeContract.IHomeView, ConfirmDownloadDialog.ConfirmDialogListener {
 
     private static final String TAG = "MainActivity";
@@ -76,7 +77,6 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
     public void initData() {
         mHomePresenter = new HomePresenter(this);
         mModel = SystemUtils.getPosinModel();
-        Log.e(TAG, "====" + mModel + "======");
 
 //        viewRootBackground.setAlpha(0.2f);
 
@@ -106,6 +106,11 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
 //                showLoadingDialog("正在查找更新包");
 //                mHomePresenter.searchUpdatePackage("M102L", "spk");
                 mHomePresenter.searchUpdatePackage(mModel, "spk");
+
+//                UpdatePresenter mUpdatePpkPresenter = new UpdatePresenter(this, this);
+//                mUpdatePpkPresenter.updateSystem(new File("mnt/sdcard/test.ppk"));
+//                UpdatePresenter mUpdatePresenter = new UpdatePresenter(this, this);
+//                mUpdatePresenter.updateSpkSystem("test.spk");
 
                 break;
             default:
@@ -183,8 +188,8 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
             String path = intent.getStringExtra("Path");
             if (!TextUtils.isEmpty(path)) {
                 Log.e(TAG, "now update system ... ");
-                UpdatePpkPresenter mUpdatePpkPresenter = new UpdatePpkPresenter(this, this);
-                mUpdatePpkPresenter.updateSystem(new File(path));
+                UpdatePresenter mUpdatePpkPresenter = new UpdatePresenter(this, this);
+                mUpdatePpkPresenter.updatePpkSystem(new File(path));
             } else {
                 Log.e(TAG, "have cancel select path");
             }
@@ -230,7 +235,8 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
 
         String systemVersion = StringUtils.append(SystemUtils.getSystemVersion(),
                 "-", SystemUtils.getSystemDateVersion());
-        new ConfirmDownloadDialog(this, systemVersion, type.toLowerCase().equals("ppk"),
+
+        new ConfirmDownloadDialog(this, systemVersion, type.toLowerCase().equals("spk"),
                 updateDetail, this).show();
 
     }
@@ -248,7 +254,6 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
         Log.e(TAG, "开始下载更新包");
         showLoadingDialog("开始下载更新包");
         tvVersionState.setText("开始下载更新包");
-
     }
 
     @Override
@@ -269,33 +274,79 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
     }
 
     @Override
-    public void downloadSuccess(String savePath) {
+    public void downloadSuccess(boolean isSpk, String savePath) {
         Log.e(TAG, "下载成功");
         tvVersionState.setText("下载成功，开始更新系统 ... ");
-        UpdatePpkPresenter mUpdatePpkPresenter = new UpdatePpkPresenter(this, this);
-        mUpdatePpkPresenter.updateSystem(new File(savePath));
+        UpdatePresenter mUpdatePresenter = new UpdatePresenter(this, this);
+        if (isSpk) {
+            Log.e(TAG, "downloadSuccess  更新SPK");
+            Toast.makeText(this, "更新SPK... ", Toast.LENGTH_SHORT).show();
+            int lastIndexOf = savePath.lastIndexOf("/");
+            savePath = lastIndexOf > 0 ? savePath.substring(lastIndexOf + 1) : savePath;
+            mUpdatePresenter.updateSpkSystem(savePath);
+        } else {
+            mUpdatePresenter.updatePpkSystem(new File(savePath));
+        }
     }
 
 
     @Override
-    public void updateFailure() {
+    public void updatePpkFailure(String filePath) {
         Log.e(TAG, "更新失败 。。。");
         tvVersionState.setText("更新失败，请重新下载更新");
+
     }
 
     @Override
-    public void updateSuccess() {
+    public void updatePpkSuccess(String filePath) {
         Log.e(TAG, "更新成功。。。");
         tvVersionState.setText("更新成功，请重启机器");
-
+        try {
+            Proc.createSuProcess("busybox rm -rf " + filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void onClickOk() {
+    public void updatePpkOnClickOk(boolean updateSuccess) {
+        if (updateSuccess) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("更新成功,马上重启！");
+            builder.setPositiveButton("重启", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    try {
+                        Proc.createSuProcess("reboot");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.setCanceledOnTouchOutside(false);
+            alertDialog.setCancelable(false);
+            alertDialog.show();
+        }
+    }
+
+    @Override
+    public void updateSpkStart(String filePath) {
+        showLoadingDialog("正在执行准备升级环境，请稍后");
+    }
+
+    @Override
+    public void updateSpkFailure(String filePath, String message) {
+        dismissLoadingDialog();
+        Toast.makeText(this, "出错了：" + message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void updateSpkSuccess(String filePath) {
+        dismissLoadingDialog();
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("更新成功,马上重启！");
-//        builder.setIcon(R.mipmap.icon_launcher);
-//        builder.setMessage("更新成功,马上重启！");
+        builder.setTitle("准备完成,马上重启更新系统！");
         builder.setPositiveButton("重启", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -322,11 +373,17 @@ public class MainActivity extends BaseActivity implements UpdatePpkContract.upda
 
         Log.d(TAG, "downloadUrl: " + downloadUrl);
 
-        if (isSpk) {
-            mHomePresenter.downloadUpdatePackage(downloadUrl, "mnt/sdcard/test.spk");
+        String fileName = downloadUrl.substring(downloadUrl.lastIndexOf("/") + 1);
+        Log.e(TAG, "fileName: " + fileName);
+        if (!TextUtils.isEmpty(fileName)) {
+            mHomePresenter.downloadUpdatePackage(downloadUrl, isSpk,
+                    StringUtils.append("mnt/sdcard/", fileName));
         } else {
-            mHomePresenter.downloadUpdatePackage(downloadUrl, "mnt/sdcard/test.ppk");
-
+            if (isSpk) {
+                mHomePresenter.downloadUpdatePackage(downloadUrl, true, "mnt/sdcard/update.spk");
+            } else {
+                mHomePresenter.downloadUpdatePackage(downloadUrl, false, "mnt/sdcard/update.ppk");
+            }
         }
     }
 

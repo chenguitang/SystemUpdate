@@ -6,6 +6,8 @@ import android.util.Log;
 import com.posin.systemupdate.bean.UpdateDetail;
 import com.posin.systemupdate.http.util.HttpClient;
 import com.posin.systemupdate.ui.contract.HomeContract;
+import com.posin.systemupdate.utils.StringUtils;
+import com.posin.systemupdate.utils.SystemUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -50,11 +52,11 @@ public class HomePresenter implements HomeContract.IHomePresenter {
 
                     @Override
                     public void onNext(@NonNull UpdateDetail updateDetail) {
-                        String updateUrl = updateDetail.getUrl();
-                        if (TextUtils.isEmpty(updateUrl)) {
-                            mHomeView.unNeedUpdate(type);
-                        } else {
+                        String newVersion = updateDetail.getVersion();
+                        if (parseCompareVersion(newVersion)) {
                             mHomeView.needToUpdate(type, updateDetail);
+                        } else {
+                            mHomeView.unNeedUpdate(type);
                         }
                     }
 
@@ -72,7 +74,7 @@ public class HomePresenter implements HomeContract.IHomePresenter {
     }
 
     @Override
-    public void downloadUpdatePackage(String url, final String savePath) {
+    public void downloadUpdatePackage(String url, final boolean isSpk, final String savePath) {
         HttpClient.getInstance().download(url, mHomeView)
                 .subscribeOn(Schedulers.io())
                 .map(new Function<ResponseBody, InputStream>() {
@@ -102,21 +104,39 @@ public class HomePresenter implements HomeContract.IHomePresenter {
                     @Override
                     public void onError(@NonNull Throwable e) {
                         mHomeView.downloadFailure(e);
-                        Log.e(TAG, "Error: "+e.getMessage());
+                        Log.e(TAG, "Error: " + e.getMessage());
                         mHomeView.dismissDownloadProgress();
                     }
 
                     @Override
                     public void onComplete() {
                         mHomeView.dismissDownloadProgress();
-                        mHomeView.downloadSuccess(savePath);
+                        mHomeView.downloadSuccess(isSpk, savePath);
                     }
                 });
     }
 
-    @Override
-    public void updateSystemForPpk(String path) {
 
+    /**
+     * 解析比较是否有更新包需要更新系统
+     *
+     * @param newVersion 后台最新版本
+     * @return boolean
+     */
+    public boolean parseCompareVersion(String newVersion) {
+        if (!TextUtils.isEmpty(newVersion)) {
+            if (newVersion.length() >= 8) {
+                String dateVersion = newVersion.substring(newVersion.length() - 8);
+                String systemDateVersion = SystemUtils.getSystemDateVersion();
+                if (StringUtils.isNumeric(dateVersion) &&
+                        !TextUtils.isEmpty(systemDateVersion)) {
+                    if (Integer.parseInt(dateVersion) > Integer.parseInt(systemDateVersion)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**

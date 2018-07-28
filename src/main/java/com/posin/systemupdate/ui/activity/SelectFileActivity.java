@@ -5,18 +5,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.posin.systemupdate.R;
 import com.posin.systemupdate.ui.contract.SelectPpkContract;
-import com.posin.systemupdate.ui.contract.UpdatePpkContract;
 import com.posin.systemupdate.ui.presenter.SelectPpkPresenter;
-import com.posin.systemupdate.ui.presenter.UpdatePpkPresenter;
-import com.posin.systemupdate.view.FileBrowserDialog;
 
 import java.io.File;
-import java.io.IOException;
-
-import static android.R.attr.path;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 public class SelectFileActivity extends AppCompatActivity
         implements SelectPpkContract.selectUpdatePackageView {

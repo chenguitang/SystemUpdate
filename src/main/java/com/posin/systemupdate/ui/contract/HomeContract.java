@@ -59,7 +59,7 @@ public interface HomeContract {
         /**
          * 下载成功
          */
-        void downloadSuccess(String savePath);
+        void downloadSuccess(boolean isSpk,String savePath);
 
         /**
          * 隐藏下载更新包进度提示
@@ -80,16 +80,11 @@ public interface HomeContract {
          * 下载更新包
          *
          * @param url      下载地址
+         * @param isSpk    更新包是否为SPK
          * @param savePath 文件保存地址
          */
-        void downloadUpdatePackage(String url, String savePath);
+        void downloadUpdatePackage(String url, boolean isSpk, String savePath);
 
-        /**
-         * 更新PPK
-         *
-         * @param path PPK文件路径
-         */
-        void updateSystemForPpk(String path);
 
     }
 

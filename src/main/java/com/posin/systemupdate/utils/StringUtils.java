@@ -59,5 +59,15 @@ public class StringUtils {
         return df.format(value);
     }
 
+    /**
+     * 判断字符串是否为数字
+     *
+     * @param s 字符串
+     * @return boolean
+     */
+    public static boolean isNumeric(String s) {
+        return s != null && !"".equals(s.trim()) && s.matches("^-?[0-9]+.?[0-9]+$");
+    }
+
 
 }
